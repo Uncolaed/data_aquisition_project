@@ -12,17 +12,27 @@ import { Badge } from "@/components/ui/badge"
 export default function Live() {
   const [messages, setMessages] = useState([])
   const lastMessageRef = useRef(null)
+  const lastUpdateRef = useRef(0)
 
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:8080")
 
     ws.onmessage = (event) => {
       try {
+        const now = Date.now()
+        // Add 500ms delay between updates
+        if (now - lastUpdateRef.current < 500) {
+          return
+        }
+        lastUpdateRef.current = now
+
         const record = JSON.parse(event.data)
         setMessages((prev) => [
           ...prev,
           {
-            distance: record.distance,
+            waterLevel: record.waterLevel,
+            inputMotor: record.inputMotor,
+            outputMotor: record.outputMotor,
             time: new Date(record.timestamp).toLocaleTimeString(),
           },
         ])
@@ -60,7 +70,9 @@ export default function Live() {
               className="space-y-1"
             >
               <p className="text-xs text-muted-foreground">{msg.time}</p>
-              <p className="text-sm">Motion Detected!: {msg.distance} cm</p>
+              <p className="text-sm">Water Level: <span className="font-semibold">{msg.waterLevel}</span></p>
+              <p className="text-sm">Input Motor: <Badge variant={msg.inputMotor ? "default" : "outline"}>{msg.inputMotor ? "ON" : "OFF"}</Badge></p>
+              <p className="text-sm">Output Motor: <Badge variant={msg.outputMotor ? "default" : "outline"}>{msg.outputMotor ? "ON" : "OFF"}</Badge></p>
               {index < messages.length - 1 && (
                 <Separator className="my-2" />
               )}

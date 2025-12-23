@@ -23,31 +23,31 @@ export default function Database() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchDetections = async () => {
+    const fetchReadings = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`${API_URL}/api/detections`)
+        const response = await fetch(`${API_URL}/api/readings`)
         if (!response.ok) {
-          throw new Error("Failed to fetch detections")
+          throw new Error("Failed to fetch readings")
         }
         const data = await response.json()
         setLogs(data)
       } catch (err) {
-        console.error("Error fetching detections:", err)
+        console.error("Error fetching readings:", err)
         setError(err.message)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchDetections()
+    fetchReadings()
   }, [])
 
   if (loading) {
     return (
       <Card className="mx-auto max-w-5xl">
         <CardHeader>
-          <CardTitle>Event Database</CardTitle>
+          <CardTitle>Sensor Database</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-center text-muted-foreground">Loading...</p>
@@ -60,7 +60,7 @@ export default function Database() {
     return (
       <Card className="mx-auto max-w-5xl">
         <CardHeader>
-          <CardTitle>Event Database</CardTitle>
+          <CardTitle>Sensor Database</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-center text-red-500">Error: {error}</p>
@@ -72,7 +72,7 @@ export default function Database() {
   return (
     <Card className="mx-auto max-w-5xl">
       <CardHeader>
-        <CardTitle>Event Database</CardTitle>
+        <CardTitle>Sensor Database</CardTitle>
       </CardHeader>
 
       <CardContent>
@@ -81,15 +81,17 @@ export default function Database() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Timestamp</TableHead>
-              <TableHead>Distance</TableHead>
+              <TableHead>Water Level</TableHead>
+              <TableHead>Input Motor</TableHead>
+              <TableHead>Output Motor</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {logs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center text-muted-foreground">
-                  No detections recorded yet
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  No readings recorded yet
                 </TableCell>
               </TableRow>
             ) : (
@@ -99,7 +101,17 @@ export default function Database() {
                   <TableCell>
                     {new Date(log.timestamp).toLocaleString()}
                   </TableCell>
-                  <TableCell>{log.distance} cm</TableCell>
+                  <TableCell className="font-semibold">{log.waterLevel}</TableCell>
+                  <TableCell>
+                    <Badge variant={log.inputMotor ? "default" : "outline"}>
+                      {log.inputMotor ? "ON" : "OFF"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={log.outputMotor ? "default" : "outline"}>
+                      {log.outputMotor ? "ON" : "OFF"}
+                    </Badge>
+                  </TableCell>
                 </TableRow>
               ))
             )}

@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import "./wsServer.js";   // starts WebSocket server
 import "./serial.js";     // starts serial communication
-import { connectMongo, getAllDetections } from "./mongo.js";
+import { connectMongo, getAllReadings } from "./mongo.js";
 
 const app = express();
 const PORT = process.env.API_PORT || 3000;
@@ -10,14 +10,14 @@ const PORT = process.env.API_PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// API endpoint to get all detections
-app.get("/api/detections", async (req, res) => {
+// API endpoint to get all sensor readings
+app.get("/api/readings", async (req, res) => {
   try {
-    const detections = await getAllDetections();
-    res.json(detections);
+    const readings = await getAllReadings();
+    res.json(readings);
   } catch (error) {
-    console.error("Error fetching detections:", error);
-    res.status(500).json({ error: "Failed to fetch detections" });
+    console.error("Error fetching readings:", error);
+    res.status(500).json({ error: "Failed to fetch readings" });
   }
 });
 
