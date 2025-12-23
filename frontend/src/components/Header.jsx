@@ -8,7 +8,7 @@ export default function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between">
         <div className="flex items-center gap-2 font-semibold">
           <Shield className="h-5 w-5" />
-          <span>SecureHome Monitor</span>
+          <span>Smart Water Pump System</span>
         </div>
 
         <nav className="flex gap-2">
